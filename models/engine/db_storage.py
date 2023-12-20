@@ -69,7 +69,7 @@ class DBStorage:
         Method to get an object
         based on its id
         '''
-        obj = self.__session(cls).get(id)
+        obj = self.__session.query(cls).get(id)
         if obj is None:
             return None
         return obj
