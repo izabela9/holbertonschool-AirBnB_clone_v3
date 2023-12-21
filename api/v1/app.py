@@ -6,7 +6,7 @@ to deploy our API
 from flask import Flask
 from models import storage
 from api.v1.views import app_views
-import os
+from os import getenv
 from flask import jsonify
 
 app = Flask(__name__)
@@ -30,6 +30,6 @@ if __name__ == "__main__":
     '''
     Starting server
     '''
-    host = os.getenv("HBNB_API_HOST", "0.0.0.0")
-    port = int(os.getenv("HBNB_API_PORT", 5000))
-    app.run(host=host, port=port, threaded=True)
+    app.run(host=getenv("HBNB_API_HOST", default="0.0.0.0"),
+            port=int(getenv("HBNB_API_PORT", default=5000)),
+            threaded=True)
