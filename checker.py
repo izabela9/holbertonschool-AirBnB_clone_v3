@@ -9,7 +9,6 @@ if __name__ == "__main__":
     """
     r = requests.get("http://0.0.0.0:5000/api/v1/states")
     r_j = r.json()
-    
     state_id = None
     for state_j in r_j:
         rs = requests.get("http://0.0.0.0:5000/api/v1/states/{}/cities".format(state_j.get('id')))
@@ -17,20 +16,14 @@ if __name__ == "__main__":
         if len(rs_j) != 0:
             state_id = state_j.get('id')
             break
-    
+    print(state_id)
     if state_id is None:
         print("State with cities not found")
     
-    """ Fetch cities
+    """ POST /api/v1/states/<state_id>/cities
     """
-    r = requests.get("http://0.0.0.0:5000/api/v1/states/{}/cities".format(state_id))
+    r = requests.post("http://0.0.0.0:5000/api/v1/states/{}/cities/".format(state_id), data=json.dumps({ 'name': "NewCity" }), headers={ 'Content-Type': "application/json" })
+    print(r.status_code)
     r_j = r.json()
-    print(type(r_j))
-    print(len(r_j))
-    for city_j in r_j:
-        if city_j.get('name') in ["Fremont", "San Francisco", "San Diego"]:
-            print("OK")
-        else:
-            print("Missing: {}".format(city_j.get('name')))
-        if city_j.get('id') is None:
-            print("Missing ID for City: {}".format(city_j.get('name')))
+    print(r_j.get('id') is None)
+    print(r_j.get('name') == "NewCity")

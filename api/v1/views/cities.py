@@ -63,3 +63,49 @@ def update_city(city_id):
             setattr(city, key, value)
     storage.save()
     return jsonify(city.to_dict()), 200
+
+@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'])
+def handle_cities(state_id):
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404)
+
+    if request.method == 'GET':
+        return jsonify([city.to_dict() for city in state.cities])
+
+    elif request.method == 'POST':
+        if not request.get_json():
+            abort(400, description="Not a JSON")
+        data = request.get_json()
+        if 'name' not in data:
+            abort(400, description="Missing name")
+        city = City(name=data['name'], state_id=state.id)
+        storage.new(city)
+        storage.save()
+        return jsonify(city.to_dict()), 201
+
+
+@app_views.route('/cities/<city_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_city(city_id):
+    city = storage.get(City, city_id)
+    if not city:
+        abort(404)
+
+    if request.method == 'GET':
+        return jsonify(city.to_dict())
+
+    elif request.method == 'PUT':
+        if not request.get_json():
+            abort(400, description="Not a JSON")
+        data = request.get_json()
+        ignore_keys = ['id', 'state_id', 'created_at', 'updated_at']
+        for key, value in data.items():
+            if key not in ignore_keys:
+                setattr(city, key, value)
+        storage.save()
+        return jsonify(city.to_dict()), 200
+
+    elif request.method == 'DELETE':
+        storage.delete(city)
+        storage.save()
+        return jsonify({}), 200
