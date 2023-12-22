@@ -73,7 +73,7 @@ def handle_cities(state_id):
     if request.method == 'GET':
         return jsonify([city.to_dict() for city in state.cities])
 
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if not request.get_json():
             abort(400, description="Not a JSON")
         data = request.get_json()
@@ -94,7 +94,7 @@ def handle_city(city_id):
     if request.method == 'GET':
         return jsonify(city.to_dict())
 
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         if not request.get_json():
             abort(400, description="Not a JSON")
         data = request.get_json()
@@ -105,7 +105,7 @@ def handle_city(city_id):
         storage.save()
         return jsonify(city.to_dict()), 200
 
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         storage.delete(city)
         storage.save()
         return jsonify({}), 200
