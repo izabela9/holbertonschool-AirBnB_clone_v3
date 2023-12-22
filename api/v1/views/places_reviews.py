@@ -22,9 +22,8 @@ def handle_place_reviews(place_id):
         return abort(404)
 
     if request.method == 'GET':
-        reviews = storage.all(Review).values()
-        place_reviews = [review.to_dict() for review in place.reviews]
-        return jsonify(place_reviews)
+        reviews = [review.to_dict() for review in place.reviews]
+        return jsonify(reviews)
 
     if request.method == 'POST':
         data = request.get_json(silent=True, force=True)
