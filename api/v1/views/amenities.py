@@ -32,6 +32,7 @@ def handle_amenities():
 
         return jsonify(new_amenity.to_dict()), 201
 
+
 @app_views.route('/amenities/<amenity_id>',
                  methods=['GET', 'PUT', 'DELETE'], strict_slashes=False)
 def handle_specific_amenity(amenity_id):
@@ -62,4 +63,3 @@ def handle_specific_amenity(amenity_id):
         storage.delete(amenity)
         storage.save()
         return jsonify({}), 200
-
