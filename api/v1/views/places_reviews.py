@@ -19,33 +19,34 @@ def handle_place_reviews(place_id):
     place = storage.get(Place, place_id)
 
     if place is None:
-        abort(404)
+        return abort(404)
 
     if request.method == 'GET':
         reviews = storage.all(Review).values()
-        place_reviews = [review.to_dict() for review in reviews
-                         if review.place_id == place.id]
+        place_reviews = [review.to_dict() for review in place.reviews]
         return jsonify(place_reviews)
 
     if request.method == 'POST':
         data = request.get_json(silent=True, force=True)
 
         if data is None:
-            abort(400, description="Not a JSON")
+            return abort(400, description="Not a JSON")
+        
+        user_id = data.get("user_id", None)
+        text = data.get("text", None)
 
-        if 'user_id' not in data:
-            abort(400, description="Missing user_id")
+        if user_id not in data:
+            return abort(400, description="Missing user_id")
 
-        if 'text' not in data:
-            abort(400, description="Missing text")
+        if text not in data:
+            return abort(400, description="Missing text")
 
-        user_id = data['user_id']
         user = storage.get(User, user_id)
 
         if user is None:
             abort(404)
 
-        new_review = Review(place_id=place.id, **data)
+        new_review = Review(place_id=place_id, **data)
         storage.new(new_review)
         storage.save()
 
@@ -59,16 +60,16 @@ def handle_review(review_id):
     review = storage.get(Review, review_id)
 
     if review is None:
-        abort(404)
+        return abort(404)
 
     if request.method == 'GET':
-        return jsonify(review.to_dict())
+        return jsonify(review.to_dict()), 200
 
     if request.method == 'PUT':
         data = request.get_json(silent=True, force=True)
 
         if data is None:
-            abort(400, description="Not a JSON")
+            return abort(400, description="Not a JSON")
 
         ignore_keys = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
         for key, value in data.items():
