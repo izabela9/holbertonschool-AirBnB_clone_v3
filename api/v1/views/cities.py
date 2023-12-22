@@ -65,8 +65,8 @@ def update_city(city_id):
     return jsonify(city.to_dict()), 200
 """
 
-@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'])
-def handle_cities(state_id):
+@app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'], strict_slashes=False)
+def handle_cities(state_id=None):
     state = storage.get(State, state_id)
     if not state:
         abort(404)
@@ -77,7 +77,7 @@ def handle_cities(state_id):
     if request.method == 'POST':
         if not request.get_json():
             abort(400, description="Not a JSON")
-        data = request.get_json()
+        data = request.get_json(silent=True, force=True)
         if 'name' not in data:
             abort(400, description="Missing name")
         city = City(name=data['name'], state_id=state.id)
