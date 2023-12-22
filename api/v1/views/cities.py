@@ -10,7 +10,7 @@ from models.city import City
 from models.state import State
 from api.v1.views import app_views
 
-
+"""
 @app_views.route('/states/<state_id>/cities', methods=['GET'])
 def get_cities(state_id):
     state = storage.get(State, state_id)
@@ -63,6 +63,7 @@ def update_city(city_id):
             setattr(city, key, value)
     storage.save()
     return jsonify(city.to_dict()), 200
+"""
 
 @app_views.route('/states/<state_id>/cities', methods=['GET', 'POST'])
 def handle_cities(state_id):
